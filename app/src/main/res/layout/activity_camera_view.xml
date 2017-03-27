@@ -16,16 +16,40 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:src="@drawable/mapmark"
+
         android:visibility="invisible" />
 
     <TextView
         android:id="@+id/cameraTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:src="@mipmap/ic_launcher"
-        android:background="#FFFFFF"
+        android:layout_centerHorizontal="true"
+        android:background="#FF9100"
+        android:textColor="#FFFFFF"
+        android:gravity="center_vertical|center_horizontal"
+        android:src="@drawable/mapmark"
         android:text="Large Text" />
+
+    <TextView
+        android:id="@+id/legend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/icon"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical|center_horizontal|center"
+        android:text="TextView"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/legend"
+        android:layout_alignStart="@+id/legend"
+        android:layout_below="@+id/legend"
+        android:gravity="center_vertical|center_horizontal|center"
+        android:text="TextView"
+        android:textStyle="bold" />
 
 </RelativeLayout>

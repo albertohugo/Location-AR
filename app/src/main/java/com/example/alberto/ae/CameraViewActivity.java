@@ -33,11 +33,15 @@ public class CameraViewActivity extends Activity implements
 	private double mMyLatitude = 0;
 	private double mMyLongitude = 0;
 
+
 	private MyCurrentAzimuth myCurrentAzimuth;
 	private MyCurrentLocation myCurrentLocation;
 
 	TextView descriptionTextView;
 	ImageView pointerIcon;
+	private TextView legend;
+	private TextView distance;
+	private Location local;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,15 +52,23 @@ public class CameraViewActivity extends Activity implements
 		setupListeners();
 		setupLayout();
 		setAugmentedRealityPoint();
+
 	}
 
 	private void setAugmentedRealityPoint() {
 		mPoi = new AugmentedPOI(
 				"Home",
 				"Home",
-				38.698870,
-				-9.191243
+				38.706056,
+				-9.142814
 		);
+	}
+
+	private final static Location mountWashington = new Location("manual");
+	static {
+		mountWashington.setLatitude(38.706056);
+		mountWashington.setLongitude(-9.142814);
+
 	}
 
 	public double calculateTeoreticalAzimuth() {
@@ -114,34 +126,45 @@ public class CameraViewActivity extends Activity implements
 	}
 
 	private void updateDescription() {
-		descriptionTextView.setText(mPoi.getPoiName() + " Teoretical "
+		/*descriptionTextView.setText(mPoi.getPoiName() + " Teoretical "
 				+ mAzimuthTeoretical + " Real " + mAzimuthReal + " latitude "
-				+ mMyLatitude + " longitude " + mMyLongitude);
+				+ mMyLatitude + " longitude " + mMyLongitude + " - D: "+ distance);*/
+		descriptionTextView.setText(String.format( "%.2f", mAzimuthTeoretical )+ " - "+ String.format( "%.2f", mAzimuthReal ));
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
 		mMyLatitude = location.getLatitude();
 		mMyLongitude = location.getLongitude();
-		mAzimuthTeoretical = calculateTeoreticalAzimuth()+160;
-		Toast.makeText(this,"latitude: "+location.getLatitude()+" longitude: "+location.getLongitude(), Toast.LENGTH_SHORT).show();
+
+
+		mAzimuthTeoretical = calculateTeoreticalAzimuth();
+		local = location;
+		//Toast.makeText(this,"latitude: "+location.getLatitude()+" longitude: "+location.getLongitude(), Toast.LENGTH_SHORT).show();
 		updateDescription();
 	}
 
 	@Override
 	public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
 		mAzimuthReal = azimuthChangedTo;
-		mAzimuthTeoretical = calculateTeoreticalAzimuth()+160;
+		mAzimuthTeoretical = calculateTeoreticalAzimuth();
 
 		pointerIcon = (ImageView) findViewById(R.id.icon);
-
+		legend = (TextView) findViewById(R.id.legend);
+		distance = (TextView) findViewById(R.id.distance);
 		double minAngle = calculateAzimuthAccuracy(mAzimuthTeoretical).get(0);
 		double maxAngle = calculateAzimuthAccuracy(mAzimuthTeoretical).get(1);
 
 		if (isBetween(minAngle, maxAngle, mAzimuthReal)) {
 			pointerIcon.setVisibility(View.VISIBLE);
+			legend.setVisibility(View.VISIBLE);
+			distance.setVisibility(View.VISIBLE);
+			legend.setText("Cais do Sodre");
+			distance.setText((Float.toString(local.distanceTo(mountWashington))+" m"));
 		} else {
 			pointerIcon.setVisibility(View.INVISIBLE);
+			legend.setVisibility(View.INVISIBLE);
+			distance.setVisibility(View.INVISIBLE);
 		}
 
 		updateDescription();
